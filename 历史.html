@@ -1,0 +1,671 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>初中历史互动课堂 | 中国古代史挑战</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Noto Sans', '微软雅黑', 'PingFang SC', Roboto, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f5efe7 0%, #e8ddce 100%);
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 头部装饰 */
+        .hero {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #7b3f00, #b45f1b);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.05);
+            letter-spacing: 1px;
+        }
+
+        .hero p {
+            color: #5a3e2b;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            border-bottom: 2px solid #d4b48c;
+            display: inline-block;
+            padding-bottom: 6px;
+        }
+
+        /* 两栏布局: 左侧测验区 右侧趣味卡 */
+        .dashboard {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .quiz-section {
+            flex: 2;
+            min-width: 280px;
+            background: rgba(255, 250, 240, 0.9);
+            backdrop-filter: blur(1px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.2);
+            padding: 1.8rem;
+            transition: transform 0.2s ease;
+            border: 1px solid #f0e2cf;
+        }
+
+        .fun-section {
+            flex: 1.2;
+            min-width: 260px;
+            background: #fff9ef;
+            border-radius: 2rem;
+            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.15);
+            padding: 1.8rem;
+            border: 1px solid #f1e2cf;
+            height: fit-content;
+        }
+
+        /* 测验标题 */
+        .quiz-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            border-left: 6px solid #b45f1b;
+            padding-left: 1rem;
+        }
+
+        .quiz-header h2 {
+            font-size: 1.7rem;
+            color: #4e2e1a;
+        }
+
+        .score-area {
+            background: #e7d8c0;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #794f29;
+        }
+
+        /* 题目卡片 */
+        .question-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+            border: 1px solid #ffe6cf;
+        }
+
+        .question-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #2d2418;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .question-icon {
+            background: #b45f1b20;
+            width: 28px;
+            height: 28px;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #b45f1b;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            margin: 0.8rem 0 0.5rem 0;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #fefaf5;
+            padding: 8px 12px;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.1s linear;
+            border: 1px solid #f0e2d0;
+        }
+
+        .option:hover {
+            background: #f4e9dd;
+            transform: translateX(5px);
+        }
+
+        .option input {
+            accent-color: #b45f1b;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .option label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: #3e2c1c;
+        }
+
+        .feedback {
+            font-size: 0.85rem;
+            margin-top: 8px;
+            padding-left: 10px;
+            border-left: 3px solid;
+            transition: 0.1s;
+        }
+
+        .feedback.correct {
+            color: #2a6b2f;
+            border-left-color: #2a6b2f;
+            background: #e9f6e9;
+            padding: 5px 10px;
+            border-radius: 12px;
+        }
+
+        .feedback.wrong {
+            color: #aa2e1e;
+            border-left-color: #aa2e1e;
+            background: #ffeae5;
+            padding: 5px 10px;
+            border-radius: 12px;
+        }
+
+        /* 按钮组 */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            background: #e2cfb3;
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #4a2e1a;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background: #b45f1b;
+            color: white;
+            box-shadow: 0 4px 10px rgba(180, 95, 27, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #934b12;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f0e0cd;
+        }
+
+        .btn-secondary:hover {
+            background: #e2cfb3;
+            transform: scale(0.98);
+        }
+
+        /* 趣味卡片部分 */
+        .fun-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px dashed #d4b48c;
+            padding-bottom: 0.8rem;
+        }
+
+        .fun-header span {
+            font-size: 2rem;
+        }
+
+        .fun-header h3 {
+            font-size: 1.5rem;
+            color: #744d28;
+        }
+
+        .fact-card {
+            background: #fff3e6;
+            border-radius: 1.2rem;
+            padding: 1.4rem;
+            margin: 1rem 0;
+            box-shadow: inset 0 0 0 1px #f7e5d3, 0 6px 12px rgba(0,0,0,0.05);
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .fact-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #2d2b26;
+            margin-bottom: 1rem;
+            font-style: normal;
+            font-weight: 500;
+        }
+
+        .fact-source {
+            font-size: 0.7rem;
+            color: #9b7a5a;
+            text-align: right;
+        }
+
+        .btn-fact {
+            background: #c28a54;
+            color: white;
+            width: 100%;
+            margin-top: 0.5rem;
+            border: none;
+            padding: 10px;
+            border-radius: 60px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-fact:hover {
+            background: #a56e3a;
+            transform: translateY(-2px);
+        }
+
+        /* 朝代小贴士额外趣味 */
+        .dynasty-tip {
+            margin-top: 1.8rem;
+            background: #f1e7db;
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #5c3f24;
+        }
+
+        .dynasty-tip strong {
+            color: #b45f1b;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            font-size: 0.8rem;
+            color: #7b623c;
+            border-top: 1px solid #dcc9ae;
+            padding-top: 1.5rem;
+        }
+
+        @media (max-width: 750px) {
+            body {
+                padding: 1rem;
+            }
+            .quiz-section, .fun-section {
+                padding: 1.2rem;
+            }
+            .hero h1 {
+                font-size: 1.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>📜 初中历史互动教学 · 中国古代史探险 📜</h1>
+        <p>⭐ 朝代风云榜 | 知识小测验 | 趣味历史一刻 ⭐</p>
+    </div>
+
+    <div class="dashboard">
+        <!-- 左侧：互动测验区 -->
+        <div class="quiz-section">
+            <div class="quiz-header">
+                <h2>🏮 朝代知识闯关 🏮</h2>
+                <div class="score-area" id="scoreDisplay">得分: 0 / 5</div>
+            </div>
+            <form id="quizForm">
+                <!-- 题目由js动态生成，方便维护，但也内嵌保证结构一致 直接写静态HTML方便阅读修改 -->
+            </form>
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="submitQuiz">📝 提交答案 & 评分</button>
+                <button class="btn btn-secondary" id="resetQuiz">🔄 重置测验</button>
+            </div>
+            <div id="globalFeedback" style="margin-top: 1rem; text-align: center; font-weight: 500;"></div>
+        </div>
+
+        <!-- 右侧：趣味互动区 -->
+        <div class="fun-section">
+            <div class="fun-header">
+                <span>🏯</span>
+                <h3>历史万花筒</h3>
+            </div>
+            <div class="fact-card" id="funFactBox">
+                <div class="fact-text" id="factText">
+                    点击下方按钮，随机获取一条中国古代史小知识，让历史活起来！
+                </div>
+                <div class="fact-source" id="factSource">📖 互动教学助手</div>
+            </div>
+            <button class="btn-fact" id="randomFactBtn">🎲 随机历史知识 🎲</button>
+            <div class="dynasty-tip">
+                💡 <strong>教师小贴士</strong><br>
+                每个朝代都有独特贡献：秦汉奠定统一，隋唐开放包容，宋元科技繁荣，明清巩固疆土。<br>
+                点击测验选项，即时反馈对错，激励探究！
+            </div>
+        </div>
+    </div>
+    <footer>
+        🌟 互动网页设计 | 初中历史教学辅助 | 点击测验 + 随机历史彩蛋 🌟
+    </footer>
+</div>
+
+<script>
+    // ---------- 题库数据 (初中中国古代史核心知识点) ----------
+    const questionsData = [
+        {
+            text: "🏮 中国历史上第一个统一的多民族封建国家是？",
+            options: ["夏朝", "商朝", "秦朝", "汉朝"],
+            correct: 2,  // 秦朝 索引从0开始
+            explanation: "✅ 秦朝（公元前221年）秦始皇统一六国，建立中央集权制度，成为第一个统一多民族封建国家。"
+        },
+        {
+            text: "🌏 丝绸之路的开拓，功劳最大的汉代使者是？",
+            options: ["卫青", "霍去病", "张骞", "班超"],
+            correct: 2,  // 张骞
+            explanation: "✅ 张骞出使西域，打通了汉朝与西域的联系，促进了东西方文明交流，史称“凿空之旅”。"
+        },
+        {
+            text: "👑 “贞观之治”是哪位皇帝统治时期的盛世局面？",
+            options: ["唐高祖李渊", "唐太宗李世民", "唐玄宗李隆基", "武则天"],
+            correct: 1,  // 唐太宗
+            explanation: "✅ 唐太宗李世民时期，政治清明，经济发展，国力强盛，史称“贞观之治”。"
+        },
+        {
+            text: "⚓ 我国古代四大发明中，宋元时期用于航海并传播到欧洲的重大发明是？",
+            options: ["造纸术", "火药", "印刷术", "指南针"],
+            correct: 3,  // 指南针
+            explanation: "✅ 指南针在宋代广泛应用于航海，后传入欧洲，为世界地理大发现提供了重要条件。"
+        },
+        {
+            text: "⛵ 明代著名航海家郑和七下西洋，最远到达的地区是？",
+            options: ["东南亚一带", "印度半岛", "红海沿岸和非洲东海岸", "地中海沿岸"],
+            correct: 2,  // 红海沿岸和非洲东海岸
+            explanation: "✅ 郑和船队最远到达红海沿岸和非洲东海岸，促进了中国与亚非各国的友好往来。"
+        }
+    ];
+
+    // 存储用户当前选择 (每个题目所选选项索引, -1表示未选)
+    let userSelections = new Array(questionsData.length).fill(-1);
+    // 存储每个题目的反馈状态和内容 (正确/错误/未答)
+    let feedbackState = new Array(questionsData.length).fill(null); // null: 未反馈, 'correct', 'wrong'
+
+    // 渲染整个测验表单
+    function renderQuiz() {
+        const quizContainer = document.getElementById('quizForm');
+        if (!quizContainer) return;
+        let html = '';
+        questionsData.forEach((q, idx) => {
+            const qNumber = idx + 1;
+            const selectedVal = userSelections[idx];
+            const feedback = feedbackState[idx];
+            let feedbackHtml = '';
+            if (feedback === 'correct') {
+                feedbackHtml = `<div class="feedback correct">🎉 回答正确！ ${q.explanation}</div>`;
+            } else if (feedback === 'wrong') {
+                const correctAnswerText = q.options[q.correct];
+                feedbackHtml = `<div class="feedback wrong">❌ 回答错误。正确答案是 “${correctAnswerText}”。 ${q.explanation}</div>`;
+            } else if (feedback === 'unanswered' && userSelections[idx] === -1) {
+                // 提交后未选特别提示，但单独控制
+                feedbackHtml = `<div class="feedback wrong" style="background:#ffefea;">⚠️ 未作答，请选择一个选项。</div>`;
+            }
+
+            // 构建选项列表
+            let optionsHtml = '';
+            q.options.forEach((opt, optIdx) => {
+                const isChecked = (selectedVal === optIdx);
+                optionsHtml += `
+                    <div class="option" data-qidx="${idx}" data-oidx="${optIdx}">
+                        <input type="radio" name="q${idx}" value="${optIdx}" id="q${idx}_opt${optIdx}" ${isChecked ? 'checked' : ''}>
+                        <label for="q${idx}_opt${optIdx}">${String.fromCharCode(65+optIdx)}. ${opt}</label>
+                    </div>
+                `;
+            });
+
+            html += `
+                <div class="question-card" data-qid="${idx}">
+                    <div class="question-text">
+                        <span class="question-icon">${qNumber}</span>
+                        <span>${q.text}</span>
+                    </div>
+                    <div class="options" data-qgroup="${idx}">
+                        ${optionsHtml}
+                    </div>
+                    <div class="feedback-area" id="fb_${idx}">
+                        ${feedbackHtml}
+                    </div>
+                </div>
+            `;
+        });
+        quizContainer.innerHTML = html;
+
+        // 重新绑定选项点击和radio变化事件 (委托方式也可以，直接绑定change)
+        for (let i = 0; i < questionsData.length; i++) {
+            const radios = document.getElementsByName(`q${i}`);
+            radios.forEach(radio => {
+                radio.removeEventListener('change', handleRadioChange);
+                radio.addEventListener('change', handleRadioChange);
+            });
+        }
+
+        // 更新得分显示
+        updateScoreDisplay();
+    }
+
+    // 处理radio选中事件，实时更新userSelections并清除反馈（未提交前的临时）
+    function handleRadioChange(event) {
+        const radio = event.target;
+        const nameAttr = radio.getAttribute('name'); // 格式 "q0"
+        if (!nameAttr) return;
+        const qIndex = parseInt(nameAttr.substring(1));
+        const selectedVal = parseInt(radio.value);
+        if (!isNaN(qIndex) && userSelections[qIndex] !== selectedVal) {
+            userSelections[qIndex] = selectedVal;
+            // 清除该题的反馈显示（因为用户重新选择后，之前提交的反馈应该消失）
+            if (feedbackState[qIndex] !== null) {
+                feedbackState[qIndex] = null;
+                // 重新刷新该题的反馈区
+                const fbDiv = document.getElementById(`fb_${qIndex}`);
+                if (fbDiv) fbDiv.innerHTML = '';
+            }
+            // 更新全局得分显示（提交前的得分先不展示，等提交后再显示，但实时得分仅显示当前提交过的得分？更合理仅提交时计算）
+            // 但为了保证体验，重置得分显示时，如果反馈都被清空，分数显示应变为0/5 或者保留之前提交分数不合理；我们等提交后再改变分数显示，
+            // 因此重新计算已提交正确的个数: 如果用户修改了某个已评分题目，则清除得分状态后总分显示会变，我们再调用updateScoreDisplay基于已反馈正确的数量。
+            updateScoreDisplay();
+        }
+    }
+
+    // 根据feedbackState统计正确数量并更新得分显示
+    function updateScoreDisplay() {
+        let correctCount = 0;
+        for (let i = 0; i < feedbackState.length; i++) {
+            if (feedbackState[i] === 'correct') correctCount++;
+        }
+        const scoreSpan = document.getElementById('scoreDisplay');
+        if (scoreSpan) {
+            scoreSpan.innerText = `得分: ${correctCount} / ${questionsData.length}`;
+        }
+        // 额外处理全局反馈信息，如果全部正确则表扬
+        const globalDiv = document.getElementById('globalFeedback');
+        if (correctCount === questionsData.length && correctCount > 0) {
+            globalDiv.innerHTML = '<span style="background:#d9e6b3; padding:6px 12px; border-radius:30px;">🎉 太棒了！你是历史小状元！ 🎉</span>';
+        } else if (correctCount > 0 && correctCount < questionsData.length) {
+            globalDiv.innerHTML = '<span style="background:#faf0cf; padding:4px 12px; border-radius:30px;">📚 再试试其他题目，温故知新~</span>';
+        } else {
+            globalDiv.innerHTML = '';
+        }
+    }
+
+    // 提交评分
+    function submitQuiz() {
+        // 首先检查每一题是否有选择，没有选择的给默认反馈为未答
+        let allValid = true;
+        for (let i = 0; i < questionsData.length; i++) {
+            if (userSelections[i] === -1) {
+                allValid = false;
+                // 给未答题一个未答反馈显示（但不会标记正确/错误）
+                if (feedbackState[i] !== 'unanswered') {
+                    feedbackState[i] = 'unanswered';
+                }
+            } else {
+                // 若已经有选择，则计算正确性
+                const isCorrect = (userSelections[i] === questionsData[i].correct);
+                if (isCorrect) {
+                    feedbackState[i] = 'correct';
+                } else {
+                    feedbackState[i] = 'wrong';
+                }
+            }
+        }
+        // 对于已经选了但上面逻辑已经覆盖，但需要处理当未答题时保持unanswered，但存在已选但之前状态是null的情况已处理。
+        // 重新渲染反馈区域
+        for (let i = 0; i < questionsData.length; i++) {
+            const fbDiv = document.getElementById(`fb_${i}`);
+            if (fbDiv) {
+                let feedbackHtml = '';
+                if (feedbackState[i] === 'correct') {
+                    feedbackHtml = `<div class="feedback correct">🎉 回答正确！ ${questionsData[i].explanation}</div>`;
+                } else if (feedbackState[i] === 'wrong') {
+                    const correctAns = questionsData[i].options[questionsData[i].correct];
+                    feedbackHtml = `<div class="feedback wrong">❌ 回答错误。正确答案是 “${correctAns}”。 ${questionsData[i].explanation}</div>`;
+                } else if (feedbackState[i] === 'unanswered') {
+                    feedbackHtml = `<div class="feedback wrong" style="background:#ffefea;">⚠️ 本题未作答，请选择一个选项再提交。</div>`;
+                } else {
+                    feedbackHtml = '';
+                }
+                fbDiv.innerHTML = feedbackHtml;
+            }
+        }
+        // 更新得分显示
+        updateScoreDisplay();
+
+        // 若存在未答题，提示信息显示在顶部
+        if (!allValid) {
+            const globalDiv = document.getElementById('globalFeedback');
+            globalDiv.innerHTML = '<span style="background:#f7cfb0; padding:6px 12px; border-radius:30px;">📌 还有题目未作答，请完成所有题目再获得完整评分~</span>';
+            setTimeout(() => {
+                if (globalDiv.innerHTML.includes('未作答')) {
+                    // 保留3秒自动切换回普通提示但不影响主要
+                    setTimeout(() => updateScoreDisplay(), 2000);
+                }
+            }, 2000);
+        } else {
+            const correctCnt = feedbackState.filter(s => s === 'correct').length;
+            if (correctCnt === questionsData.length) {
+                const globalDiv = document.getElementById('globalFeedback');
+                globalDiv.innerHTML = '<span style="background:#c9e9c0; padding:6px 12px; border-radius:30px;">🏆 恭喜满分！历史达人就是你 🏆</span>';
+            } else {
+                const globalDiv = document.getElementById('globalFeedback');
+                globalDiv.innerHTML = '<span style="background:#fdf0cf;">💪 继续加油，可以查看解析再学一遍~</span>';
+            }
+        }
+    }
+
+    // 重置测验: 清除所有选择、反馈、得分清空
+    function resetQuiz() {
+        userSelections.fill(-1);
+        feedbackState.fill(null);
+        // 重新渲染整个表单
+        renderQuiz();
+        const globalDiv = document.getElementById('globalFeedback');
+        globalDiv.innerHTML = '';
+        // 额外确保右侧趣味区不受影响
+        updateScoreDisplay();
+    }
+
+    // ---------- 右侧随机历史知识库 (趣味卡片) ----------
+    const historyFacts = [
+        { text: "📜 秦朝统一文字为小篆，后又推广隶书，为文化传承奠定基础。", source: "《汉字发展史》" },
+        { text: "🏺 汉朝时期，张衡发明了地动仪，是世界上最早监测地震的仪器。", source: "科技史话" },
+        { text: "🍵 唐朝陆羽著有《茶经》，被誉为“茶圣”，饮茶文化风靡后世。", source: "《茶经》" },
+        { text: "🎨 宋朝张择端的《清明上河图》生动记录了北宋都城汴京的繁华景象。", source: "名画鉴赏" },
+        { text: "🧭 北宋时期，指南针开始用于航海，后经阿拉伯传入欧洲。", source: "四大发明" },
+        { text: "⚔️ 元朝疆域空前辽阔，实行行省制度，影响至今。", source: "元史" },
+        { text: "📖 明朝编纂了《永乐大典》，是世界最大的百科全书之一。", source: "文化典籍" },
+        { text: "🏯 清朝康熙乾隆时期，出现“康乾盛世”，国家统一，经济繁荣。", source: "清史" },
+        { text: "✍️ 司马迁撰写的《史记》是中国第一部纪传体通史，鲁迅称为“史家之绝唱”。", source: "《史记》" },
+        { text: "🎋 科举制度始于隋朝，完善于唐朝，延续1300年，影响人才选拔。", source: "制度史话" },
+        { text: "🏮 丝绸之路不仅交易丝绸，还交流了造纸术、佛教等文化。", source: "文化交流" },
+        { text: "🔥 火药在宋朝被广泛应用于军事，改变了战争形态。", source: "古代科技" }
+    ];
+
+    function getRandomFact() {
+        const randomIndex = Math.floor(Math.random() * historyFacts.length);
+        return historyFacts[randomIndex];
+    }
+
+    function updateRandomFact() {
+        const fact = getRandomFact();
+        const factTextDiv = document.getElementById('factText');
+        const factSourceDiv = document.getElementById('factSource');
+        if (factTextDiv) factTextDiv.innerHTML = `📖 ${fact.text}`;
+        if (factSourceDiv) factSourceDiv.innerHTML = `🔍 来源: ${fact.source}`;
+        // 加一点动画效果
+        const factBox = document.getElementById('funFactBox');
+        if (factBox) {
+            factBox.style.transform = 'scale(0.98)';
+            setTimeout(() => { if(factBox) factBox.style.transform = 'scale(1)'; }, 120);
+        }
+    }
+
+    // 页面加载初始化
+    function init() {
+        renderQuiz();
+        // 初始随机展示一条知识，不要空内容
+        const firstFact = historyFacts[0];
+        document.getElementById('factText').innerHTML = `📖 ${firstFact.text}`;
+        document.getElementById('factSource').innerHTML = `🔍 来源: ${firstFact.source}`;
+        const randomBtn = document.getElementById('randomFactBtn');
+        if (randomBtn) randomBtn.addEventListener('click', updateRandomFact);
+        const submitBtn = document.getElementById('submitQuiz');
+        if (submitBtn) submitBtn.addEventListener('click', submitQuiz);
+        const resetBtn = document.getElementById('resetQuiz');
+        if (resetBtn) resetBtn.addEventListener('click', resetQuiz);
+    }
+
+    init();
+</script>
+</body>
+</html>
